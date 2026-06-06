@@ -1,11 +1,5 @@
-import { createRequire } from 'module';
-import { fileURLToPath } from 'url';
-import path from 'path';
-
-const require = createRequire(import.meta.url);
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
 const { app, BrowserWindow, ipcMain, screen } = require('electron');
+const path = require('path');
 const Store = require('electron-store');
 
 const store = new Store({
