@@ -5,5 +5,6 @@ contextBridge.exposeInMainWorld('api', {
   getSettings: () => ipcRenderer.invoke('get-settings'),
   onSettingsUpdated: (cb) => ipcRenderer.on('settings-updated', (_e, s) => cb(s)),
   moveWindow: (dx, dy) => ipcRenderer.send('move-window', dx, dy),
-  setMouseIgnore: (ignore) => ipcRenderer.send('set-mouse-ignore', ignore)
+  setMouseIgnore: (ignore) => ipcRenderer.send('set-mouse-ignore', ignore),
+  notifyReady: () => ipcRenderer.send('overlay-ready')
 });

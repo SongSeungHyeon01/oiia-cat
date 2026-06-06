@@ -153,6 +153,7 @@ async function init() {
   catEl.style.height = `${settings.catSize}px`;
   await loadAudio();
   requestAnimationFrame(tick);
+  window.api.notifyReady();
 }
 
 init();

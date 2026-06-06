@@ -99,45 +99,48 @@ function createSettingsWindow() {
   settingsWin.on('closed', () => { settingsWin = null; });
 }
 
-ipcMain.handle('get-settings', () => store.store);
-
-ipcMain.handle('save-settings', (_e, s) => {
-  store.set('volume', s.volume);
-  store.set('catSize', s.catSize);
-  store.set('sensitivity', s.sensitivity);
-  if (overlayWin && !overlayWin.isDestroyed()) {
-    const winSize = s.catSize + 40;
-    overlayWin.setSize(winSize, winSize);
-    overlayWin.webContents.send('settings-updated', store.store);
-  }
-});
-
-ipcMain.handle('reset-position', () => {
-  const pos = getDefaultPosition(store.get('catSize'));
-  store.set('position', pos);
-  if (overlayWin) overlayWin.setPosition(pos.x, pos.y);
-});
-
-ipcMain.on('move-window', (_e, dx, dy) => {
-  if (!overlayWin) return;
-  const [x, y] = overlayWin.getPosition();
-  const nx = x + dx;
-  const ny = y + dy;
-  overlayWin.setPosition(nx, ny);
-  store.set('position', { x: nx, y: ny });
-});
-
-ipcMain.on('set-mouse-ignore', (_e, ignore) => {
-  if (overlayWin) overlayWin.setIgnoreMouseEvents(ignore, { forward: true });
-});
-
 app.whenReady().then(() => {
+  ipcMain.handle('get-settings', () => store.store);
+
+  ipcMain.handle('save-settings', (_e, s) => {
+    store.set('volume', s.volume);
+    store.set('catSize', s.catSize);
+    store.set('sensitivity', s.sensitivity);
+    if (overlayWin && !overlayWin.isDestroyed()) {
+      const winSize = s.catSize + 40;
+      overlayWin.setSize(winSize, winSize);
+      overlayWin.webContents.send('settings-updated', store.store);
+    }
+  });
+
+  ipcMain.handle('reset-position', () => {
+    const pos = getDefaultPosition(store.get('catSize'));
+    store.set('position', pos);
+    if (overlayWin) overlayWin.setPosition(pos.x, pos.y);
+  });
+
+  ipcMain.on('move-window', (_e, dx, dy) => {
+    if (!overlayWin) return;
+    const [x, y] = overlayWin.getPosition();
+    const nx = x + dx;
+    const ny = y + dy;
+    overlayWin.setPosition(nx, ny);
+    store.set('position', { x: nx, y: ny });
+  });
+
+  ipcMain.on('set-mouse-ignore', (_e, ignore) => {
+    if (overlayWin) overlayWin.setIgnoreMouseEvents(ignore, { forward: true });
+  });
+
   createOverlayWindow();
   createTray();
 
+  let overlayReady = false;
+  ipcMain.once('overlay-ready', () => { overlayReady = true; });
+
   uIOhook.on('keydown', () => {
-    if (overlayWin && !overlayWin.isDestroyed()) {
-      overlayWin.webContents.send('keypress');
+    if (overlayReady && overlayWin && !overlayWin.isDestroyed()) {
+      try { overlayWin.webContents.send('keypress'); } catch (_) {}
     }
   });
 
