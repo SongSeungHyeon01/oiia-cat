@@ -110,6 +110,42 @@ window.api.onSettingsUpdated((s) => {
   if (gainNode) gainNode.gain.value = s.volume / 100;
 });
 
+// --- 드래그 ---
+let dragging  = false;
+let dragStartX = 0;
+let dragStartY = 0;
+
+catEl.addEventListener('mouseenter', () => {
+  window.api.setMouseIgnore(false);
+});
+
+catEl.addEventListener('mouseleave', () => {
+  if (!dragging) window.api.setMouseIgnore(true);
+});
+
+catEl.addEventListener('mousedown', (e) => {
+  dragging   = true;
+  dragStartX = e.screenX;
+  dragStartY = e.screenY;
+  e.preventDefault();
+});
+
+document.addEventListener('mouseup', () => {
+  if (dragging) {
+    dragging = false;
+    window.api.setMouseIgnore(true);
+  }
+});
+
+document.addEventListener('mousemove', (e) => {
+  if (!dragging) return;
+  const dx = e.screenX - dragStartX;
+  const dy = e.screenY - dragStartY;
+  dragStartX = e.screenX;
+  dragStartY = e.screenY;
+  window.api.moveWindow(dx, dy);
+});
+
 // --- 초기화 ---
 async function init() {
   settings = await window.api.getSettings();
