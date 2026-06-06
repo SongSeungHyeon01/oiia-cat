@@ -1,0 +1,25 @@
+appId: com.oiiacat.app
+productName: OIIA Cat
+copyright: OIIA Cat
+
+directories:
+  output: dist
+
+files:
+  - src/**/*
+  - assets/**/*
+  - package.json
+
+win:
+  target:
+    - target: nsis
+      arch: [x64]
+  icon: assets/cat.png
+
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  installerIcon: assets/cat.png
+  uninstallerIcon: assets/cat.png
+
+npmRebuild: true
