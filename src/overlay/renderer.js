@@ -14,6 +14,40 @@ let settings = { volume: 70, catSize: 80, sensitivity: 'medium' };
 
 const catEl = document.getElementById('cat');
 
+// --- 오디오 ---
+let audioCtx    = null;
+let audioBuffer = null;
+let sourceNode  = null;
+let gainNode    = null;
+
+async function loadAudio() {
+  audioCtx = new AudioContext();
+  gainNode = audioCtx.createGain();
+  gainNode.gain.value = settings.volume / 100;
+  gainNode.connect(audioCtx.destination);
+
+  const res = await fetch('../../assets/oiia.mp3');
+  const buf = await res.arrayBuffer();
+  audioBuffer = await audioCtx.decodeAudioData(buf);
+}
+
+function startAudio() {
+  if (!audioBuffer || sourceNode) return;
+  audioCtx.resume();
+  sourceNode = audioCtx.createBufferSource();
+  sourceNode.buffer = audioBuffer;
+  sourceNode.loop = true;
+  sourceNode.connect(gainNode);
+  sourceNode.start();
+}
+
+function stopAudio() {
+  if (!sourceNode) return;
+  try { sourceNode.stop(); } catch (_) {}
+  sourceNode.disconnect();
+  sourceNode = null;
+}
+
 // --- KPS 계산 (speed.js와 동일 로직, renderer 컨텍스트용 인라인) ---
 function calcKps(now) {
   const cutoff = now - 2000;
@@ -42,12 +76,14 @@ function tick(now) {
     if (currentRate < STOP_RATE) {
       currentRate = 0;
       state = 'IDLE';
+      stopAudio();
     }
   }
 
   if (state !== 'IDLE') {
     rotation += currentRate * SPEED_CONSTANT * dt;
     catEl.style.transform = `rotate(${rotation}deg)`;
+    if (sourceNode) sourceNode.playbackRate.value = currentRate;
   }
 
   requestAnimationFrame(tick);
@@ -57,18 +93,21 @@ function tick(now) {
 window.api.onKeypress(() => {
   const now = performance.now();
   timestamps.push(now);
-  // 오래된 타임스탬프 정리
   const cutoff = now - 2100;
   while (timestamps.length && timestamps[0] < cutoff) timestamps.shift();
   lastKeyTime = now;
 
-  if (state === 'IDLE' || state === 'COASTING') state = 'SPINNING';
+  if (state === 'IDLE' || state === 'COASTING') {
+    state = 'SPINNING';
+    startAudio();
+  }
 });
 
 window.api.onSettingsUpdated((s) => {
   settings = s;
   catEl.style.width  = `${s.catSize}px`;
   catEl.style.height = `${s.catSize}px`;
+  if (gainNode) gainNode.gain.value = s.volume / 100;
 });
 
 // --- 초기화 ---
@@ -76,6 +115,7 @@ async function init() {
   settings = await window.api.getSettings();
   catEl.style.width  = `${settings.catSize}px`;
   catEl.style.height = `${settings.catSize}px`;
+  await loadAudio();
   requestAnimationFrame(tick);
 }
 
