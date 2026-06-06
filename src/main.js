@@ -1,6 +1,7 @@
 const { app, BrowserWindow, ipcMain, screen, Tray, Menu } = require('electron');
 const path = require('path');
 const Store = require('electron-store');
+const { UiohookKey, uIOhook } = require('uiohook-napi');
 
 const store = new Store({
   defaults: {
@@ -98,9 +99,53 @@ function createSettingsWindow() {
   settingsWin.on('closed', () => { settingsWin = null; });
 }
 
+ipcMain.handle('get-settings', () => store.store);
+
+ipcMain.handle('save-settings', (_e, s) => {
+  store.set('volume', s.volume);
+  store.set('catSize', s.catSize);
+  store.set('sensitivity', s.sensitivity);
+  if (overlayWin && !overlayWin.isDestroyed()) {
+    const winSize = s.catSize + 40;
+    overlayWin.setSize(winSize, winSize);
+    overlayWin.webContents.send('settings-updated', store.store);
+  }
+});
+
+ipcMain.handle('reset-position', () => {
+  const pos = getDefaultPosition(store.get('catSize'));
+  store.set('position', pos);
+  if (overlayWin) overlayWin.setPosition(pos.x, pos.y);
+});
+
+ipcMain.on('move-window', (_e, dx, dy) => {
+  if (!overlayWin) return;
+  const [x, y] = overlayWin.getPosition();
+  const nx = x + dx;
+  const ny = y + dy;
+  overlayWin.setPosition(nx, ny);
+  store.set('position', { x: nx, y: ny });
+});
+
+ipcMain.on('set-mouse-ignore', (_e, ignore) => {
+  if (overlayWin) overlayWin.setIgnoreMouseEvents(ignore, { forward: true });
+});
+
 app.whenReady().then(() => {
   createOverlayWindow();
   createTray();
+
+  uIOhook.on('keydown', () => {
+    if (overlayWin && !overlayWin.isDestroyed()) {
+      overlayWin.webContents.send('keypress');
+    }
+  });
+
+  uIOhook.start();
+});
+
+app.on('before-quit', () => {
+  uIOhook.stop();
 });
 
 app.on('window-all-closed', (e) => e.preventDefault());
