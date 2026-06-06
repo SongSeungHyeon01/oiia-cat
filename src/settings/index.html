@@ -1,1 +1,74 @@
-<!DOCTYPE html><html><body><p>설정 (준비 중)</p></body></html>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>OIIA Cat 설정</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #161b22;
+      color: #e6edf3;
+      padding: 20px;
+    }
+    h2 { font-size: 15px; margin-bottom: 18px; }
+    .row { margin-bottom: 14px; }
+    label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #8b949e;
+      margin-bottom: 5px;
+    }
+    input[type="range"] { width: 100%; accent-color: #7c3aed; }
+    select {
+      width: 100%;
+      background: #21262d;
+      border: 1px solid #30363d;
+      color: #e6edf3;
+      padding: 5px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+    hr { border: none; border-top: 1px solid #30363d; margin: 16px 0; }
+    button {
+      width: 100%;
+      background: #21262d;
+      border: 1px solid #30363d;
+      color: #e6edf3;
+      padding: 7px;
+      border-radius: 4px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    button:hover { background: #2d333b; }
+  </style>
+</head>
+<body>
+  <h2>⚙️ OIIA Cat 설정</h2>
+
+  <div class="row">
+    <label>🔊 볼륨 <span id="volumeVal">70%</span></label>
+    <input type="range" id="volume" min="0" max="100" value="70">
+  </div>
+
+  <div class="row">
+    <label>🐱 고양이 크기 <span id="sizeVal">80px</span></label>
+    <input type="range" id="catSize" min="40" max="160" value="80">
+  </div>
+
+  <div class="row">
+    <label>⚡ 감도</label>
+    <select id="sensitivity">
+      <option value="low">낮음 (6 KPS = 1×)</option>
+      <option value="medium" selected>보통 (4 KPS = 1×)</option>
+      <option value="high">높음 (2.5 KPS = 1×)</option>
+    </select>
+  </div>
+
+  <hr>
+  <button id="resetPos">📌 위치 초기화 (우하단)</button>
+
+  <script src="renderer.js"></script>
+</body>
+</html>

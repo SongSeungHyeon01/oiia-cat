@@ -1,1 +1,7 @@
-// placeholder — will be filled in Task 11
+const { contextBridge, ipcRenderer } = require('electron');
+
+contextBridge.exposeInMainWorld('api', {
+  getSettings: () => ipcRenderer.invoke('get-settings'),
+  saveSettings: (s) => ipcRenderer.invoke('save-settings', s),
+  resetPosition: () => ipcRenderer.invoke('reset-position')
+});
