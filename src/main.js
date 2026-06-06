@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, screen } = require('electron');
+const { app, BrowserWindow, ipcMain, screen, Tray, Menu } = require('electron');
 const path = require('path');
 const Store = require('electron-store');
 
@@ -48,8 +48,59 @@ function createOverlayWindow() {
   overlayWin.setIgnoreMouseEvents(true, { forward: true });
 }
 
+function createTray() {
+  const iconPath = path.join(__dirname, '..', 'assets', 'cat-tray.png');
+  const tray = new Tray(iconPath);
+  tray.setToolTip('OIIA Cat');
+  let visible = true;
+
+  function buildMenu() {
+    return Menu.buildFromTemplate([
+      {
+        label: visible ? '고양이 숨기기' : '고양이 보이기',
+        click: () => {
+          visible = !visible;
+          visible ? overlayWin.show() : overlayWin.hide();
+          tray.setContextMenu(buildMenu());
+        }
+      },
+      {
+        label: '설정',
+        click: () => createSettingsWindow()
+      },
+      { type: 'separator' },
+      {
+        label: '종료',
+        click: () => app.quit()
+      }
+    ]);
+  }
+
+  tray.setContextMenu(buildMenu());
+}
+
+function createSettingsWindow() {
+  if (settingsWin) { settingsWin.focus(); return; }
+
+  settingsWin = new BrowserWindow({
+    width: 280,
+    height: 320,
+    resizable: false,
+    title: 'OIIA Cat 설정',
+    webPreferences: {
+      nodeIntegration: false,
+      contextIsolation: true,
+      preload: path.join(__dirname, 'settings', 'preload.js')
+    }
+  });
+
+  settingsWin.loadFile(path.join(__dirname, 'settings', 'index.html'));
+  settingsWin.on('closed', () => { settingsWin = null; });
+}
+
 app.whenReady().then(() => {
   createOverlayWindow();
+  createTray();
 });
 
 app.on('window-all-closed', (e) => e.preventDefault());
