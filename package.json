@@ -1,0 +1,22 @@
+{
+  "name": "oiia-cat",
+  "version": "0.1.0",
+  "description": "OIIA Maxwell cat desktop overlay",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "jest",
+    "rebuild": "electron-rebuild -f -w uiohook-napi",
+    "dist": "electron-builder"
+  },
+  "dependencies": {
+    "electron-store": "^8.1.0",
+    "uiohook-napi": "^1.5.4"
+  },
+  "devDependencies": {
+    "electron": "^28.3.3",
+    "electron-builder": "^24.9.1",
+    "electron-rebuild": "^3.2.9",
+    "jest": "^29.7.0"
+  }
+}
