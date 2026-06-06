@@ -1,8 +1,9 @@
-{
+﻿{
   "name": "oiia-cat",
   "version": "0.1.0",
   "description": "OIIA Maxwell cat desktop overlay",
   "main": "src/main.js",
+  "type": "module",
   "scripts": {
     "start": "electron .",
     "test": "jest",
@@ -20,3 +21,27 @@
     "jest": "^29.7.0"
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
