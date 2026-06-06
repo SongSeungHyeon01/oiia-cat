@@ -14,12 +14,12 @@ win:
   target:
     - target: nsis
       arch: [x64]
-  icon: assets/cat.png
+  icon: assets/cat.ico
 
 nsis:
   oneClick: false
   allowToChangeInstallationDirectory: true
-  installerIcon: assets/cat.png
-  uninstallerIcon: assets/cat.png
+  installerIcon: assets/cat.ico
+  uninstallerIcon: assets/cat.ico
 
 npmRebuild: true
