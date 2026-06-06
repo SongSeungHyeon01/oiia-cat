@@ -3,12 +3,29 @@
 <head>
   <meta charset="UTF-8">
   <style>
-    * { margin: 0; padding: 0; }
-    body { background: transparent; display: flex; align-items: center; justify-content: center; width: 100vw; height: 100vh; }
-    img { width: 80px; height: 80px; object-fit: contain; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: transparent;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100vw;
+      height: 100vh;
+    }
+    #cat {
+      width: 80px;
+      height: 80px;
+      object-fit: contain;
+      cursor: grab;
+      user-select: none;
+      will-change: transform;
+    }
+    #cat:active { cursor: grabbing; }
   </style>
 </head>
 <body>
   <img id="cat" src="../../assets/cat.png" draggable="false" />
+  <script src="renderer.js"></script>
 </body>
 </html>
