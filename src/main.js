@@ -1,12 +1,12 @@
 const { app, BrowserWindow, ipcMain, screen, Tray, Menu } = require('electron');
 const path = require('path');
 const Store = require('electron-store');
-const { UiohookKey, uIOhook } = require('uiohook-napi');
+const { uIOhook } = require('uiohook-napi');
 
 const store = new Store({
   defaults: {
     volume: 70,
-    catSize: 80,
+    catSize: 140,
     sensitivity: 'medium',
     position: { x: null, y: null }
   }
@@ -34,15 +34,28 @@ function createOverlayWindow() {
     y: pos.y,
     frame: false,
     transparent: true,
+    backgroundColor: '#00000000',
     alwaysOnTop: true,
     skipTaskbar: true,
     resizable: false,
+    show: false,
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
       autoplayPolicy: 'no-user-gesture-required',
       preload: path.join(__dirname, 'overlay', 'preload.js')
     }
+  });
+
+  overlayWin.once('ready-to-show', () => {
+    overlayWin.show();
+    const [w, h] = overlayWin.getSize();
+    overlayWin.setSize(w + 1, h);
+    overlayWin.setSize(w, h);
+  });
+
+  overlayWin.webContents.on('render-process-gone', (_e, details) => {
+    console.error('Renderer gone:', details.reason, details.exitCode);
   });
 
   overlayWin.loadFile(path.join(__dirname, 'overlay', 'index.html'));
@@ -95,6 +108,7 @@ function createSettingsWindow() {
     }
   });
 
+  settingsWin.setMenu(null);
   settingsWin.loadFile(path.join(__dirname, 'settings', 'index.html'));
   settingsWin.on('closed', () => { settingsWin = null; });
 }
@@ -130,6 +144,28 @@ app.whenReady().then(() => {
 
   ipcMain.on('set-mouse-ignore', (_e, ignore) => {
     if (overlayWin) overlayWin.setIgnoreMouseEvents(ignore, { forward: true });
+  });
+
+  ipcMain.on('show-cat-menu', (_e, isPaused) => {
+    const menu = Menu.buildFromTemplate([
+      {
+        label: '▶  Play',
+        enabled: isPaused,
+        click: () => {
+          if (overlayWin && !overlayWin.isDestroyed())
+            overlayWin.webContents.send('set-paused', false);
+        }
+      },
+      {
+        label: '⏸  Pause',
+        enabled: !isPaused,
+        click: () => {
+          if (overlayWin && !overlayWin.isDestroyed())
+            overlayWin.webContents.send('set-paused', true);
+        }
+      }
+    ]);
+    menu.popup({ window: overlayWin });
   });
 
   createOverlayWindow();

@@ -1,2 +1,9 @@
 node_modules/
 dist/
+electron-tmp.zip
+*.zip
+yt-dlp.exe
+start-err.txt
+start-out.txt
+.omc/
+*player-script.js

@@ -6,5 +6,7 @@ contextBridge.exposeInMainWorld('api', {
   onSettingsUpdated: (cb) => ipcRenderer.on('settings-updated', (_e, s) => cb(s)),
   moveWindow: (dx, dy) => ipcRenderer.send('move-window', dx, dy),
   setMouseIgnore: (ignore) => ipcRenderer.send('set-mouse-ignore', ignore),
-  notifyReady: () => ipcRenderer.send('overlay-ready')
+  notifyReady: () => ipcRenderer.send('overlay-ready'),
+  showCatMenu: (isPaused) => ipcRenderer.send('show-cat-menu', isPaused),
+  onSetPaused: (cb) => ipcRenderer.on('set-paused', (_e, val) => cb(val))
 });

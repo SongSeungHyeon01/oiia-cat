@@ -2,72 +2,142 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>OIIA Cat 설정</title>
+  <title>Settings</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #161b22;
-      color: #e6edf3;
-      padding: 20px;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #1a1a1a;
+      color: #f0f0f0;
+      padding: 24px 20px 20px;
+      user-select: none;
     }
-    h2 { font-size: 15px; margin-bottom: 18px; }
-    .row { margin-bottom: 14px; }
-    label {
+
+    h2 {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #666;
+      margin-bottom: 20px;
+    }
+
+    .row {
+      margin-bottom: 18px;
+    }
+
+    .row-header {
       display: flex;
       justify-content: space-between;
-      font-size: 12px;
-      color: #8b949e;
-      margin-bottom: 5px;
+      align-items: baseline;
+      margin-bottom: 8px;
     }
-    input[type="range"] { width: 100%; accent-color: #7c3aed; }
+
+    .row-label {
+      font-size: 13px;
+      color: #ccc;
+    }
+
+    .row-value {
+      font-size: 12px;
+      color: #888;
+      font-variant-numeric: tabular-nums;
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 3px;
+      background: #333;
+      border-radius: 2px;
+      outline: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px;
+      height: 14px;
+      background: #fff;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+    }
+
     select {
       width: 100%;
-      background: #21262d;
-      border: 1px solid #30363d;
-      color: #e6edf3;
-      padding: 5px 8px;
-      border-radius: 4px;
+      background: #252525;
+      border: 1px solid #333;
+      color: #ccc;
+      padding: 7px 10px;
+      border-radius: 6px;
       font-size: 12px;
-    }
-    hr { border: none; border-top: 1px solid #30363d; margin: 16px 0; }
-    button {
-      width: 100%;
-      background: #21262d;
-      border: 1px solid #30363d;
-      color: #e6edf3;
-      padding: 7px;
-      border-radius: 4px;
-      font-size: 12px;
+      outline: none;
       cursor: pointer;
     }
-    button:hover { background: #2d333b; }
+
+    select:focus { border-color: #555; }
+
+    .divider {
+      border: none;
+      border-top: 1px solid #2a2a2a;
+      margin: 18px 0;
+    }
+
+    button {
+      width: 100%;
+      background: transparent;
+      border: 1px solid #333;
+      color: #888;
+      padding: 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+    }
+
+    button:hover {
+      border-color: #555;
+      color: #ccc;
+    }
   </style>
 </head>
 <body>
-  <h2>⚙️ OIIA Cat 설정</h2>
+  <h2>Settings</h2>
 
   <div class="row">
-    <label>🔊 볼륨 <span id="volumeVal">70%</span></label>
+    <div class="row-header">
+      <span class="row-label">Volume</span>
+      <span class="row-value" id="volumeVal">70%</span>
+    </div>
     <input type="range" id="volume" min="0" max="100" value="70">
   </div>
 
   <div class="row">
-    <label>🐱 고양이 크기 <span id="sizeVal">80px</span></label>
-    <input type="range" id="catSize" min="40" max="160" value="80">
+    <div class="row-header">
+      <span class="row-label">Cat size</span>
+      <span class="row-value" id="sizeVal">140px</span>
+    </div>
+    <input type="range" id="catSize" min="40" max="500" value="140">
   </div>
 
   <div class="row">
-    <label>⚡ 감도</label>
+    <div class="row-header">
+      <span class="row-label">Sensitivity</span>
+    </div>
     <select id="sensitivity">
-      <option value="low">낮음 (6 KPS = 1×)</option>
-      <option value="medium" selected>보통 (4 KPS = 1×)</option>
-      <option value="high">높음 (2.5 KPS = 1×)</option>
+      <option value="low">Low</option>
+      <option value="medium" selected>Medium</option>
+      <option value="high">High</option>
     </select>
   </div>
 
-  <hr>
-  <button id="resetPos">📌 위치 초기화 (우하단)</button>
+  <hr class="divider">
+  <button id="resetPos">Reset position</button>
 
   <script src="renderer.js"></script>
 </body>

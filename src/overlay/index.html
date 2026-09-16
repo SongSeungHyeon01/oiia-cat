@@ -14,18 +14,17 @@
       height: 100vh;
     }
     #cat {
-      width: 80px;
-      height: 80px;
-      object-fit: contain;
+      display: block;
       cursor: grab;
       user-select: none;
-      will-change: transform;
+      image-rendering: auto;
+      transform-origin: bottom center;
     }
     #cat:active { cursor: grabbing; }
   </style>
 </head>
 <body>
-  <img id="cat" src="../../assets/cat.png" draggable="false" />
+  <canvas id="cat"></canvas>
   <script src="renderer.js"></script>
 </body>
 </html>
